@@ -1,1 +1,1 @@
-echo 'Hello World demo'
+echo 'Hello Jenkins'
