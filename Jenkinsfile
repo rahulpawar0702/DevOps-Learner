@@ -1,34 +1,28 @@
-pipeline {
-    agent {label "jenkins-slavenode-01"} 
-    environment {
-    DOCKERHUB_CREDENTIALS = credentials('docker-hub-jenkins')
-    }
-    stages { 
-        stage('SCM Checkout') {
-            steps{
-            git 'https://github.com/rahulpawar0702/DevOps-Learner.git'
-            }
-        }
+pipeline { 
+  
+   agent {label "jenkins-slavenode-01"} 
 
-        stage('Build docker image') {
-            steps {  
-                sh 'docker build -t dockerjenkins/nodeapp:$BUILD_NUMBER .'
-            }
+   stages {
+   
+     stage('Install Dependencies') { 
+        steps { 
+           sh 'npm install' 
         }
-        stage('login to dockerhub') {
-            steps{
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            }
+     }
+     
+     stage('Test') { 
+        steps { 
+           sh 'echo "testing application..."'
         }
-        stage('push image') {
-            steps{
-                sh 'docker push dockerjenkins/nodeapp:$BUILD_NUMBER'
-            }
-        }
-}
-post {
-        always {
-            sh 'docker logout'
-        }
-    }
-}
+      }
+
+         stage("Deploy application") { 
+         steps { 
+           sh 'echo "deploying application..."'
+         }
+
+     }
+  
+   	}
+
+   }
