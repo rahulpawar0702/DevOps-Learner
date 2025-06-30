@@ -1,21 +1,34 @@
 pipeline {
-    agent any
+    agent {label "jenkins-slavenode-01"} 
+    environment {
+    DOCKERHUB_CREDENTIALS = credentials('docker-hub-jenkins')
+    }
+    stages { 
+        stage('SCM Checkout') {
+            steps{
+            git 'https://github.com/ravdy/nodejs-demo.git'
+            }
+        }
 
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
+        stage('Build docker image') {
+            steps {  
+                sh 'docker build -t dockerjenkins/nodeapp:$BUILD_NUMBER .'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
+        stage('login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+        stage('push image') {
+            steps{
+                sh 'docker push dockerjenkins/nodeapp:$BUILD_NUMBER'
             }
+        }
+}
+post {
+        always {
+            sh 'docker logout'
         }
     }
 }
