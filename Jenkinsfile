@@ -6,7 +6,7 @@ pipeline {
    
      stage('Install Dependencies') { 
         steps { 
-           sh 'echo "installing application..."' 
+           sh 'echo "installing application on jenkins..."'
         }
      }
      
